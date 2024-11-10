@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
     game: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Game',
+    },
+    is_bot: {
+      type: Boolean,
+    },
+    language_code: {
+      type: String,
     }
   },
   { timestamps: true }
