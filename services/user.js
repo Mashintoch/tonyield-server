@@ -9,11 +9,12 @@ const authenticateUser = async (initData) => {
       throw new Error("Unauthorized. Access denied!");
     }
 
-    const user = initData.user;
+      const user = initData.user;
+console.log(user)
 
     // Find or create user
     let existingUser = await User.findOne({ telegram_id: user.id });
-
+    console.log(existingUser)
     if (existingUser) {
       return existingUser;
     } else {

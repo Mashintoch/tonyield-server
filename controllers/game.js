@@ -13,24 +13,20 @@ const getLeaderboard = async (req, res) => {
 
 const claimRewards = async (req, res) => {
   try {
-    const { score, address, webAppData } = req.body;
+    const { level, reward, webAppData } = req.body;
 
-    if (
-      typeof score !== "number" ||
-      typeof address !== "string" ||
-      typeof webAppData !== "object"
-    ) {
+    if (typeof reward !== "number" || typeof webAppData !== "object") {
       return response(
         res,
         400,
         "Invalid request data",
-        "Ensure score is a number, address is a string, and webAppData is an object"
+        "Ensure reward is a number, address is a string, and webAppData is an object"
       );
     }
 
     const rewardResult = await GameService.claimRewards(
-      score,
-      address,
+      level,
+      reward,
       webAppData
     );
     return response(res, 200, "Rewards claimed", rewardResult);

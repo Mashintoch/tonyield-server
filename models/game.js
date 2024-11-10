@@ -2,11 +2,16 @@ const mongoose = require("mongoose");
 
 const gameSchema = new mongoose.Schema(
   {
-    rewards: {
+    reward: {
       type: Number,
+      default: 0,
     },
-    levels: {
+    level: {
       type: String,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     }
   },
   { timestamps: true }

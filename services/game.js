@@ -42,15 +42,12 @@ class GameContract {
 
 let gameContract;
 (async () => {
-  gameContract = await new GameContract(
-    client,
-    process.env.CONTRACT_MNEMONIC
-  );
+  gameContract = await new GameContract(client, process.env.CONTRACT_MNEMONIC);
 })();
 
 let leaderboard = [];
 
-const submitScore = () => {
+const submitScore = async () => {
   try {
     const { userId, score, webAppData } = req.body;
 
@@ -67,21 +64,6 @@ const submitScore = () => {
     leaderboard.sort((a, b) => b.score - a.score);
     leaderboard = leaderboard.slice(0, 100);
 
-    res.json({ success: true });
-  } catch (error) {
-    console.error("Error submitting score:", error);
-    return new Error("Server error");
-  }
-};
-
-const claimRewards = async () => {
-  try {
-    const { userId, score, address, webAppData } = req.body;
-
-    if (!verifyTelegramWebAppData(webAppData)) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
     // Calculate rewards (1 TON per 1000 points)
     const rewardAmount = Math.floor((score / 1000) * 1_000_000_000);
 
@@ -91,6 +73,40 @@ const claimRewards = async () => {
       success: true,
       transaction: tx.hash,
     });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error submitting score:", error);
+    return new Error("Server error");
+  }
+};
+
+const claimRewards = async () => {
+  try {
+    const { level, reward, webAppData } = req.body;
+
+    if (!verifyTelegramWebAppData(webAppData)) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const existingGame = await Game.findById({
+      telegram_id: webAppData.user.id,
+    });
+    if (existingGame) {
+      const existingReward = existingGame.reward;
+      const newReward = existingReward + reward;
+      existingReward.level = level
+      await existingReward.save()
+      return newReward;
+    } else {
+      const createdReward = await Game.create({
+        user: webAppData.user.id,
+        reward: reward,
+        level: level,
+      });
+      await createdReward.save();
+      return createdReward;
+    }
   } catch (error) {
     console.error("Error claiming rewards:", error);
     return new Error("Server error");
@@ -99,13 +115,13 @@ const claimRewards = async () => {
 
 const getLeaderboard = async (userId) => {
   try {
-    const leaderboard = User.find({})
+    const leaderboard = User.find({});
     const user = await User.findById(userId);
     return {
-      userId: user.userId,
-      score: user.score,
-      leaderboard,
-    }
+      success: true,
+      user,
+      leaderboard: leaderboard.sort((a, b) => b.score - a.score)
+    };
   } catch (error) {
     return new Error("server error", error);
   }
