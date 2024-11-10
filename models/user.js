@@ -14,18 +14,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    points: {
-      type: Number,
-      default: 0,
-    },
     wallet: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Wallet',
     },
-    game: [{
+    game: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Game',
-    }]
+    }
   },
   { timestamps: true }
 )

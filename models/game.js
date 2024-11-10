@@ -3,14 +3,11 @@ const mongoose = require("mongoose");
 const gameSchema = new mongoose.Schema(
   {
     rewards: {
-      type: [Number],
+      type: Number,
     },
-    leaderboard: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    levels: {
+      type: String,
+    }
   },
   { timestamps: true }
 );

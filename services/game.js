@@ -1,8 +1,9 @@
 require("dotenv").config();
 const { TonClient, WalletContractV4, internal } = require("@ton/ton");
 const { mnemonicToPrivateKey } = require("@ton/crypto");
-const { verifyTelegramWebAppData, generateMnemonic } = require("../helpers/verifyTelegram")
+const { verifyTelegramWebAppData } = require("../helpers/verifyTelegram");
 const Game = require("../models/game");
+const User = require("../models/user");
 
 const client = new TonClient({
   endpoint: process.env.TON_ENDPOINT,
@@ -41,14 +42,13 @@ class GameContract {
 
 let gameContract;
 (async () => {
-  gameContract = await GameContract.create(
+  gameContract = await new GameContract(
     client,
     process.env.CONTRACT_MNEMONIC
   );
 })();
 
 let leaderboard = [];
-
 
 const submitScore = () => {
   try {
@@ -97,9 +97,15 @@ const claimRewards = async () => {
   }
 };
 
-const getLeaderboard = () => {
+const getLeaderboard = async (userId) => {
   try {
-    return leaderboard.slice(0, 10);
+    const leaderboard = User.find({})
+    const user = await User.findById(userId);
+    return {
+      userId: user.userId,
+      score: user.score,
+      leaderboard,
+    }
   } catch (error) {
     return new Error("server error", error);
   }
