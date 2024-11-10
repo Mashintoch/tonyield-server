@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { mnemonicNew } = require("@ton/crypto");
+require("dotenv").config();
 
 const generateMnemonic = async  ()  => {
     try {
@@ -15,9 +16,9 @@ const generateMnemonic = async  ()  => {
 const verifyTelegramWebAppData = (telegramInitData) => {
     try {
         // Get your bot token from environment variables
-        const botToken = process.env.BOT_TOKEN;
+        const botToken = process.env.TOKEN;
         if (!botToken) {
-            throw new Error('BOT_TOKEN environment variable is required');
+            throw new Error('TOKEN environment variable is required');
         }
 
         // Parse the incoming data
