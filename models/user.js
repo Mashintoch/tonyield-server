@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema(
   {
-    telegramId: {
+    telegram_id: {
       type: String,
       unique: true,
     },
@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    first_name: String,
+    last_name: String,
     email: {
       type: String,
       unique: true,
