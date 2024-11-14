@@ -7,10 +7,10 @@ const connectWithDB = () => {
   })
     .then(() => {
 
-      console.log('DB connected');
+      console.log('DB connected ✨✨');
     })
     .catch((error) => {
-      console.log('DB Error');
+      console.log('DB Error ❌');
       console.log(error);
       process.exit(1);
     });

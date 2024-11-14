@@ -1,5 +1,4 @@
 const { verifyTelegramWebAppData } = require("../helpers/verifyTelegram");
-const Game = require("../models/wallet");
 const User = require("../models/user");
 
 const authenticateUser = async (initData) => {
@@ -10,11 +9,9 @@ const authenticateUser = async (initData) => {
     }
 
       const user = initData.user;
-console.log(user)
 
     // Find or create user
     let existingUser = await User.findOne({ telegram_id: user.id });
-    console.log(existingUser)
     if (existingUser) {
       return existingUser;
     } else {

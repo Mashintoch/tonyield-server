@@ -1,9 +1,9 @@
 const crypto = require('crypto');
-require("dotenv").config();
+const configs = require("../configs/env")
 
 const verifyTelegramWebAppData = (initDataObj) => {
   try {
-    const botToken = process.env.TOKEN;
+    const botToken = configs.telegram.token;
     if (!botToken) {
       throw new Error('TOKEN environment variable is required');
     }
