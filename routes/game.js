@@ -3,10 +3,8 @@ const express = require("express");
 
 const router = express.Router();
 
-router.get("/leaderboard", GameController.getLeaderboard);
-
-router.post("/claim-rewards", GameController.claimRewards);
-
-router.post("/submit-score", GameController.submitScore);
+router.post('/rewards', GameController.getUserRewards);
+router.post('/rewards/update', GameController.updateRewards);
+router.get('/leaderboard', GameController.getLeaderboard);
 
 module.exports = router;
