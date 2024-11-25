@@ -17,7 +17,7 @@ const gameSchema = new mongoose.Schema(
     },
     experience: {
       type: Number,
-      default: 0,
+      default: 0
     },
     rewardsHistory: [
       {

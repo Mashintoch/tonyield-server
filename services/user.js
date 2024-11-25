@@ -1,5 +1,6 @@
 const { verifyTelegramWebAppData } = require("../helpers/verifyTelegram");
 const User = require("../models/user");
+const Game = require("../models/game");
 
 const authenticateUser = async (initData) => {
   try {
@@ -7,8 +8,7 @@ const authenticateUser = async (initData) => {
     if (!isAuth) {
       throw new Error("Unauthorized. Access denied!");
     }
-
-      const user = initData.user;
+    const user = initData.user;
 
     // Find or create user
     let existingUser = await User.findOne({ telegram_id: user.id });
@@ -23,6 +23,12 @@ const authenticateUser = async (initData) => {
         telegram_id: user.id,
         language_code: user.language_code,
       });
+
+      const exsitingGame = await Game.findOne({ user: newUser.id });
+      if (!exsitingGame) {
+        const newGame = new Game({ user: newUser.id });
+        await newGame.save();
+      }
       await newUser.save();
       return newUser;
     }
