@@ -9,7 +9,7 @@ const cors = require("cors");
 
 const connectWithDB = require("./database/config");
 const routes = require("./routes");
-const ToneyBot = require('./bot');
+// const ToneyBot = require('./bot');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -23,10 +23,10 @@ app.get('/', (req, res) => {
 
 app.use("/api", routes);
 
-async function bootstrap() {
-  const bot = new ToneyBot();
-  await bot.start();
-}
+// async function bootstrap() {
+//   const bot = new ToneyBot();
+//   await bot.start();
+// }
 
 void bootstrap();
 
