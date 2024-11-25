@@ -1,18 +1,17 @@
-const mongoose = require('mongoose');
-require("dotenv").config();
+const mongoose = require("mongoose");
+const config = require("../configs/env");
 
 const connectWithDB = () => {
-    
-  mongoose.connect("mongodb+srv://Paul:y9DSqyzD8uiQ9n8g@node-class.iz8y6zp.mongodb.net/TonYield", {
-  })
+  mongoose
+    .connect(config.mongodb.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then(() => {
-
-      console.log('DB connected ✨✨');
+      console.log("DB connected ✨✨");
     })
     .catch((error) => {
-      console.log('DB Error ❌');
-      console.log(error);
-      process.exit(1);
+      console.log("DB Error ❌", error);
     });
 };
 
