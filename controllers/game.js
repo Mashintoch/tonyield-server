@@ -145,7 +145,7 @@ const updateRewards = async (req, res) => {
         level: result.level,
         experience: result.experience,
         rewardsHistory: result.rewardsHistory,
-        transactionHash: result.rewardsHistory.transactionHash
+        transactionHash: webAppData.hash
       },
     });
   } catch (error) {
