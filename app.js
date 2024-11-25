@@ -28,7 +28,7 @@ app.use("/api", routes);
 //   await bot.start();
 // }
 
-void bootstrap();
+// void bootstrap();
 
 connectWithDB();
 app.listen(port, () => {
