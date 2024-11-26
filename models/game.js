@@ -17,7 +17,7 @@ const gameSchema = new mongoose.Schema(
     },
     experience: {
       type: Number,
-      default: 0
+      default: 0,
     },
     rewardsHistory: [
       {
@@ -42,6 +42,9 @@ const gameSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    dailyGain: { type: Number, default: 0 },
+    rank: { type: Number },
+    previousRank: { type: Number },
   },
   { timestamps: true }
 );

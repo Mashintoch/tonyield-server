@@ -4,6 +4,7 @@ const { mnemonicToPrivateKey } = require("@ton/crypto");
 const { verifyTelegramWebAppData } = require("../helpers/verifyTelegram");
 const Game = require("../models/game");
 const User = require("../models/user");
+const { AVATAR } = require("../configs/constants");
 
 const client = new TonClient({
   endpoint: process.env.TON_ENDPOINT,
@@ -128,7 +129,7 @@ const updateRewards = async (req, res) => {
           amount: rewardAmount,
           type: rewardType,
           timestamp: new Date(),
-          transactionHash: webAppData.hash
+          transactionHash: webAppData.hash,
         },
       },
     };
@@ -145,7 +146,7 @@ const updateRewards = async (req, res) => {
         level: result.level,
         experience: result.experience,
         rewardsHistory: result.rewardsHistory,
-        transactionHash: webAppData.hash
+        transactionHash: webAppData.hash,
       },
     });
   } catch (error) {
@@ -158,25 +159,57 @@ const getLeaderboard = async (req, res) => {
   try {
     const { webAppData } = req.body;
 
-    if (!verifyTelegramWebAppData(webAppData)) {
-      return res.status(401).json({ error: "Unauthorized" });
+    const isAuth = verifyTelegramWebAppData(webAppData);
+    if (!isAuth) {
+      throw new Error("Unauthorized. Access denied!");
+    }
+    const userId = webAppData.user;
+    const currentUser = await User.findOne({ telegram_id: userId.id });
+
+    if (!currentUser) {
+      throw new Error("User not found");
     }
 
+    // fetch leaderboard with populated user details
     const leaderboard = await Game.find({})
       .sort({ reward: -1 })
       .limit(100)
-      .populate("user", "username");
+      .populate({
+        path: "user",
+        select: "username avatar_url",
+      });
 
+    // calculate user's rank
+    const userGame = await Game.findOne({ user: currentUser._id });
     const userRank =
       (await Game.countDocuments({
         reward: { $gt: userGame.reward },
       })) + 1;
 
+    const formattedLeaderboard = leaderboard.map((entry, index) => ({
+      id: entry._id,
+      username: entry.user.username,
+      coins: entry.reward,
+      rank: index + 1,
+      previousRank: entry.previousRank || index + 1,
+      dailyGain: entry.dailyGain,
+      streak: userGame.streak,
+      avatar: entry.user.avatar_url || AVATAR,
+    }));
+
     return res.status(200).json({
       success: true,
       data: {
-        leaderboard,
-        userRank,
+        currentUser: {
+          username: currentUser.username,
+          coins: userGame.reward,
+          rank: userRank,
+          previousRank: userGame.previousRank || userRank,
+          avatar: currentUser.avatar_url || AVATAR,
+          dailyGain: userGame.dailyGain,
+          streak: userGame.streak,
+        },
+        leaderboard: formattedLeaderboard,
       },
     });
   } catch (error) {

@@ -49,6 +49,7 @@ const authenticateUser = async (initData, invite_code) => {
       const exsitingGame = await Game.findOne({ user: newUser.id });
       if (!exsitingGame) {
         const newGame = new Game({ user: newUser.id });
+        newUser.game = newGame.id;
         await newGame.save();
       }
 
