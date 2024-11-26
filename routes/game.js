@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('/rewards', GameController.getUserRewards);
 router.post('/rewards/update', GameController.updateRewards);
-router.get('/leaderboard', GameController.getLeaderboard);
+router.post('/leaderboard', GameController.getLeaderboard);
 
 module.exports = router;
