@@ -12,7 +12,6 @@ const authenticateUser = async (initData, invite_code) => {
       throw new Error("Unauthorized. Access denied!");
     }
     const user = initData.user;
-    console.log(user);
 
     // Find or create user
     let existingUser = await User.findOne({ telegram_id: user.id });
@@ -25,7 +24,7 @@ const authenticateUser = async (initData, invite_code) => {
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name || "",
-        avatar_url: user.photo,
+        avatar_url: user.photo_url,
         is_bot: user.is_bot || false,
         telegram_id: user.id,
         language_code: user.language_code,
@@ -69,16 +68,15 @@ const getInviteLink = async (initData) => {
       throw new Error("Unauthorized. Access denied!");
     }
     const userId = initData.user;
-    const user = await User.findById({ telegram_id: userId.id });
+    const user = await User.findOne({ telegram_id: userId.id });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const inviteLink = `https://t.me/taskmanager/invite/${user.invite_code}`;
-
+    const inviteLink = `https://t.me/blockvaulttrade_bot?invite/${user.invite_code}`;
     const totalReferrals = await Invite.countDocuments({
-      referrer: userId,
+      referrer: user.id,
       status: "completed",
     });
 
@@ -99,13 +97,13 @@ const getInviteQRCode = async (initData) => {
       throw new Error("Unauthorized. Access denied!");
     }
     const userId = initData.user;
-    const user = await User.findById({ telegram_id: userId.id });
+    const user = await User.findOne({ telegram_id: userId.id });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const inviteLink = `https://t.me/taskmanager/invite/${user.invite_code}`;
+    const inviteLink = `https://t.me/blockvaulttrade_bot?invite/${user.invite_code}`;
     const qrCodeDataUrl = await QRCode.toDataURL(inviteLink, {
       errorCorrectionLevel: "H",
       width: 300,
@@ -115,7 +113,6 @@ const getInviteQRCode = async (initData) => {
         light: "#FFFFFF",
       },
     });
-
     return {
       qrCode: qrCodeDataUrl,
       inviteLink,
