@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,23 +16,38 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    avatar_url: String,
     wallet: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Wallet',
+      ref: "Wallet",
     },
     game: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Game',
+      ref: "Game",
     },
     is_bot: {
       type: Boolean,
     },
     language_code: {
       type: String,
-    }
+    },
+    invite_code: {
+      type: String,
+      unique: true,
+      default: () => Math.random().toString(36).substring(2, 10).toUpperCase(),
+    },
+    referred_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    total_referrals: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
-)
+);
 
-const User = mongoose.model('User', userSchema)
-module.exports = User
+const User = mongoose.model("User", userSchema);
+module.exports = User;
